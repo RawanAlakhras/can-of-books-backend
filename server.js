@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 });
 
 //1- connect the express server with mongodb
-mongoose.connect('mongodb://localhost:27017/book', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 
 //test connection 
 const db = mongoose.connection;
