@@ -39,13 +39,16 @@ const BookModel=mongoose.model('Book',BookSchema);
         description:'Intelligent and fiercely competitive, he built Microsoft into one of the biggest and most successful companies of our time.',
         status:'any status',
     })
+    
     book1.save();
     book2.save();
     book3.save();
+    book4.save();
     console.log(book1.name);
 arrBooks.push(book1);
 arrBooks.push(book2);
 arrBooks.push(book3);
+arrBooks.push(book4);
   function Book(req,res){
     //seedBookCollection();
    
