@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 const app = express();
 app.use(cors());
 const PORT = process.env.PORT || 3001;
+app.use(express.json());
 /* const Book=require('./Book');
 const User = require('./User'); */
 app.get('/test', (request, response) => {
@@ -67,13 +68,20 @@ function seedBookCollection() {
         description:'Intelligent and fiercely competitive, he built Microsoft into one of the biggest and most successful companies of our time.',
         status:'any status',
     })
+    const book4 = new BookModel({
+      name:'Bill Gates: Hero or Villain',
+      description:'Intelligent and fiercely competitive, he built Microsoft into one of the biggest and most successful companies of our time.',
+      status:'any status',
+  })
     book1.save();
     book2.save();
     book3.save();
+    book4.save();
     console.log(book1.name);
 arrBooks.push(book1);
 arrBooks.push(book2);
 arrBooks.push(book3);
+arrBooks.push(book4);
 }
 seedBookCollection();
 
@@ -91,21 +99,105 @@ const UserModel=mongoose.model('User',UserSchema);
 
   const rawan= new UserModel({
     email:'rralakhras@gmail.com',
-    books:arrBooks,
-})
+    books:[{
+      name:'The Life',
+      description:'This book takes a look at his life starting with his early beginnings in Seattle, to becoming the richest man in the world and beyond. We take a look at his first taste of failure with his initial business venture, following on with his major successes and failures along the way. The aim of this book is to be educational and inspirational with actionable principles you can incorporate into your own life straight from the great man himself.',
+      status:'principles for success!',
+  },
+  {
+    name:'Bill Gates: Hero or Villain',
+    description:'Intelligent and fiercely competitive, he built Microsoft into one of the biggest and most successful companies of our time.',
+    status:'any status',
+},{
+  name:'Bill Gates: Hero or Villain',
+  description:'Intelligent and fiercely competitive, he built Microsoft into one of the biggest and most successful companies of our time.',
+  status:'any status',
+}]
+});
 rawan.save();
 
 
 
+
+//send all book from db
 app.get('/Book', (req,res) =>{
-  res.send(arrBooks);
+  //console.log(req.query.email);
+  const userEmail=req.query.email;
+  UserModel.find({email:userEmail},(error,userData)=>{
+    if(error){
+      res.send('something wrong');
+    }
+    else{
+      userData[0].books=arrBooks;
+      userData[0].save();
+
+      res.send(userData[0].books);
+    }
+  });
+ 
 });
+
 app.get('/User', (req,res)=>{
   res.send(rawan);
 });
+
+//add book to user
+app.post('/addBook',(req,res) =>{
+  console.log(req.body);
+
+  const {name,description,status,userEmail} = req.body;
+  UserModel.find({email:userEmail},(error,userData)=>{
+    if(error)
+    {
+      res.send('something went wrong');
+    }
+    else{
+     userData[0].books.push({
+      name:name,
+      description:description,
+      status:status,
+     });
+
+     userData[0].save();
+     res.send(userData[0].books);
+
+    }
+  })
+
+
+  
+})
  
 
+//delete book
+app.delete('/deleteBook',(req,res)=>{
+  //const index = Number(req.params.index);
+ const userEmail=req.query.email;
+ const index=Number(req.query.index);
+ console.log(index);
+   UserModel.find({email:userEmail},(error,userData)=>{
+   if(error){
+     res.send('something went wrong');
+   }
+   else
+   {
+     const newBookArray=userData[0].books.filter((book,inx)=>{
+       if(inx != index)
+       {
+        return book;
+       }
+     });
+     userData[0].books=newBookArray;
+     console.log(newBookArray);
+     userData[0].save();
+     res.send(userData[0].books);
+   } 
 
+
+ })
+ 
+  
+});
 
 
 
