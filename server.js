@@ -105,9 +105,10 @@ const UserModel=mongoose.model('User',UserSchema);
       status:'principles for success!',
   },
   {
-    name:'Bill Gates: Hero or Villain',
-    description:'Intelligent and fiercely competitive, he built Microsoft into one of the biggest and most successful companies of our time.',
-    status:'any status',
+    name:'Overdrive: Bill Gates and the Race to Control Cyberspace',
+    description:'A stupendous success story. This is the most informative book yet on Bill Gates and Microsoft.',
+    status:'An engaging, almost classic tale of a boy who finds power in gadgets and then wont let go',
+   
 },{
   name:'Bill Gates: Hero or Villain',
   description:'Intelligent and fiercely competitive, he built Microsoft into one of the biggest and most successful companies of our time.',
@@ -199,7 +200,27 @@ app.delete('/deleteBook',(req,res)=>{
   
 });
 
+//update book
 
+app.put('/updateBook/:index',(req,res)=>{
+  //const userEmail=req.query.email;
+  const index=Number(req.params.index);
+  
+  const {email,name ,description,status} =req.body;
+  //console.log(name);
+  UserModel.find({email:email},(error,userData)=>{
+    if(error){
+      res.send('something wrong');
+    }else{
+      userData[0].books[index].name=name;
+      userData[0].books[index].description=description;
+      userData[0].books[index].status=status;
+      userData[0].save();
+      res.send(userData[0].books);
+
+    }
+  });
+})
 
 
 
